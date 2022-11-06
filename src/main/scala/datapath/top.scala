@@ -119,6 +119,36 @@ BFU.io.ctrl_branch := CntrlDecMod.io.Branch
 BLU.io.in_rs1 := regfileMod.io.rdata1
 BLU.io.in_rs2 := regfileMod.io.rdata2
 BLU.io.in_func3 := ifid.io.ins_out(14,12)
+
+when(HD.io.pc_forward === "b1".U) {
+  PCMod.io.input := HD.io.pc_out
+} .otherwise {
+    when(CntrlDecMod.io.nextPCsel === "b01".U) {
+      when(BLU.io.output === 1.U && CntrlDecMod.io.Branch === 1.B) {
+        PCMod.io.input := ImmgenMod.io.sb_imm.asUInt
+        ifid.io.pc := 0.U
+        ifid.io.pc4 := 0.U
+        ifid.io.ins := 0.U
+      } .otherwise {
+        PCMod.io.input := PCMod.io.pc4
+      }
+}.elsewhen(CntrlDecMod.io.nextPCsel === "b10".U) {
+      PCMod.io.input := ImmgenMod.io.uj_imm.asUInt
+      ifid.io.pc := 0.U
+      ifid.io.pc4 := 0.U
+      ifid.io.ins := 0.U
+    }.elsewhen(CntrlDecMod.io.nextPCsel === "b11".U) {
+      PCMod.io.input := (jalrCompMod.io.out).asUInt
+      ifid.io.pc := 0.U
+      ifid.io.pc4 := 0.U
+      ifid.io.ins := 0.U
+    }
+      .otherwise {
+      PCMod.io.input := PCMod.io.pc4
+    }
+
+}
+
 jalrCompMod.io.rs1 := regfileMod.io.rdata1
 jalrCompMod.io.imm := ImmgenMod.io.i_imm
 when(BFU.io.forward_rs1 === "b0000".U) {
@@ -193,40 +223,13 @@ when(BFU.io.forward_rs2 === "b000".U) {
     BLU.io.in_rs2  := regfileMod.io.rdata2
   }
 
-when(HD.io.pc_forward === "b1".U) {
-  PCMod.io.input := HD.io.pc_out
-} .otherwise {
-    when(CntrlDecMod.io.nextPCsel === "b01".U) {
-      when(BLU.io.output === 1.U && CntrlDecMod.io.Branch === 1.B) {
-        PCMod.io.input := ImmgenMod.io.sb_imm.asUInt
-        ifid.io.pc := 0.U
-        ifid.io.pc4 := 0.U
-        ifid.io.ins := 0.U
-      } .otherwise {
-        PCMod.io.input := PCMod.io.pc4
-      }
-}.elsewhen(CntrlDecMod.io.nextPCsel === "b01".U) {
-      PCMod.io.input := ImmgenMod.io.uj_imm.asUInt
-      ifid.io.pc := 0.U
-      ifid.io.pc4 := 0.U
-      ifid.io.ins := 0.U
-    }.elsewhen(CntrlDecMod.io.nextPCsel === "b11".U) {
-      PCMod.io.input := (jalrCompMod.io.out).asUInt
-      ifid.io.pc := 0.U
-      ifid.io.pc4 := 0.U
-      ifid.io.ins := 0.U
-    }
-      .otherwise {
-      PCMod.io.input := PCMod.io.pc4
-    }
 
-}
-when(HD.io.inst_forward === "b1".U) {
-  ifid.io.ins := HD.io.inst_out
-  ifid.io.pc := HD.io.current_pc_out
-} .otherwise {
-    ifid.io.ins := instmemMod.io.inst
-}
+// when(HD.io.inst_forward === "b1".U) {
+//   ifid.io.ins := HD.io.inst_out
+//   ifid.io.pc := HD.io.current_pc_out
+// } .otherwise {
+//     ifid.io.ins := instmemMod.io.inst
+// }
 
 
 
@@ -279,9 +282,9 @@ when(FU.io.forward_a === "b00".U) {
 //InB
 when (CntrlDecMod.io.Ex_sel === "b00".U){
 		idex.io.imm :=ImmgenMod.io.i_imm}
-	.elsewhen (CntrlDecMod.io.Ex_sel === "b00".U){
+	.elsewhen (CntrlDecMod.io.Ex_sel === "b10".U){
 		idex.io.imm :=ImmgenMod.io.u_imm}
-	.elsewhen (CntrlDecMod.io.Ex_sel === "b00".U){
+	.elsewhen (CntrlDecMod.io.Ex_sel === "b01".U){
 		idex.io.imm :=ImmgenMod.io.s_imm}
 	.otherwise {idex.io.imm := 0.S}
 	
