@@ -1,0 +1,4 @@
+1666980215276:testOnly datapath.toptest
+1667563312914:testOnly datapath.toptest -- -DwriteVcd=1
+1667569715280:testOnly datapath.toptest
+1667569722322:testOnly datapath.toptest -- -DwriteVcd=1

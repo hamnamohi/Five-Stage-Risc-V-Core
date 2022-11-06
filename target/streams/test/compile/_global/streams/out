@@ -1,0 +1,6 @@
+[0m[[0m[31merror[0m] [0m[0m/home/hamna/Scala-Chisel-Learning-Journey/src/test/scala/datapath/ID_EXEtest.scala:17:27: type mismatch;[0m
+[0m[[0m[31merror[0m] [0m[0m found   : chisel3.UInt[0m
+[0m[[0m[31merror[0m] [0m[0m required: chisel3.Bool[0m
+[0m[[0m[31merror[0m] [0m[0m        c.io.OpB_s.poke(7.U)[0m
+[0m[[0m[31merror[0m] [0m[0m                          ^[0m
+[0m[[0m[31merror[0m] [0m[0mone error found[0m
