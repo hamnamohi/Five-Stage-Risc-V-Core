@@ -340,35 +340,18 @@ exemem.io.MemtoReg := idex.io.MemtoReg_out
 exemem.io.rs2 := idex.io.rs2_out
 exemem.io.alu := ALUMod.io.output
 exemem.io.rd := idex.io.rd_out
-//BrcntrlMod.io.aluc := CntrlDecMod.io.aluop
 
-//jalr component
-
-
-
-//val temp = 0.U
-// when (BrcntrlMod.io.br_taken & CntrlDecMod.io.Branch){
-//     temp := ImmgenMod.io.immd_se
-// }.otherwise {
-//    temp := PCMod.io.pc4
-// }
-//---------hamna
-// PCMod.io.input := MuxCase ( 0.U , Array (
-// (CntrlDecMod.io.nextPCsel === "b00".U ) -> PCMod.io.pc4 ,
-// (CntrlDecMod.io.nextPCsel === "b01".U) -> Mux(BrcntrlMod.io.br_taken,(ImmgenMod.io.sb_imm).asUInt,PCMod.io.pc4) ,
-// (CntrlDecMod.io.nextPCsel === "b10".U) -> (ImmgenMod.io.uj_imm).asUInt ,
-// (CntrlDecMod.io.nextPCsel === "b11".U) -> (jalrCompMod.io.out).asUInt)
-// )
 
 //datamemory
-datamemMod.io.Addr := (exemem.io.alu_out(9,2)).asUInt
+datamemMod.io.Addr := (exemem.io.alu_out(11,2)).asUInt
 datamemMod.io.Data := exemem.io.rs2_out
 datamemMod.io.MemWrite := exemem.io.MemWrite_out
-datamemMod.io.MemRead := exemem.io.MemRead
+datamemMod.io.MemRead := exemem.io.MemRead_out
 //-----Writeback
 memwb.io.RegWrite := exemem.io.RegWrite_out
 memwb.io.MemtoReg := exemem.io.MemtoReg_out
 memwb.io.MemRead := exemem.io.MemRead_out
+memwb.io.MemWrite := exemem.io.MemWrite_out
 memwb.io.mem := datamemMod.io.out
 memwb.io.alu := exemem.io.alu_out
 memwb.io.rd := exemem.io.rd_out

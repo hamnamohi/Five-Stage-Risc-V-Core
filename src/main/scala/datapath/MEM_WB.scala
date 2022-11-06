@@ -8,12 +8,14 @@ class MEM_WB extends Module {
 	val RegWrite = Input(Bool())
 	val MemtoReg = Input(Bool())
 	val MemRead = Input(Bool())
+	val MemWrite = Input(Bool())
 	val mem = Input(SInt(32.W))	
 	val alu = Input(SInt(32.W))
 	val rd = Input(UInt(5.W))
 	val RegWrite_out = Output(Bool())
 	val MemtoReg_out = Output(Bool())
 	val MemRead_out = Output(Bool())
+	val MemWrite_out = Output(Bool())
 	val mem_out = Output(SInt(32.W))
 	val alu_out = Output(SInt(32.W))
 	val rd_out = Output(UInt(5.W))
@@ -40,6 +42,10 @@ class MEM_WB extends Module {
 	val MemRead_r = RegInit(0.B)
 	MemRead_r := io.MemRead
 	io.MemRead_out := MemRead_r
+
+	val MemWrite_r = RegInit(0.B)
+	MemWrite_r := io.MemWrite
+	io.MemWrite_out := MemWrite_r
 
 	
 }
