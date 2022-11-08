@@ -120,34 +120,6 @@ BLU.io.in_rs1 := regfileMod.io.rdata1
 BLU.io.in_rs2 := regfileMod.io.rdata2
 BLU.io.in_func3 := ifid.io.ins_out(14,12)
 
-when(HD.io.pc_forward === "b1".U) {
-  PCMod.io.input := HD.io.pc_out
-} .otherwise {
-    when(CntrlDecMod.io.nextPCsel === "b01".U) {
-      when(BLU.io.output === 1.U && CntrlDecMod.io.Branch === 1.B) {
-        PCMod.io.input := ImmgenMod.io.sb_imm.asUInt
-        ifid.io.pc := 0.U
-        ifid.io.pc4 := 0.U
-        ifid.io.ins := 0.U
-      } .otherwise {
-        PCMod.io.input := PCMod.io.pc4
-      }
-}.elsewhen(CntrlDecMod.io.nextPCsel === "b10".U) {
-      PCMod.io.input := ImmgenMod.io.uj_imm.asUInt
-      ifid.io.pc := 0.U
-      ifid.io.pc4 := 0.U
-      ifid.io.ins := 0.U
-    }.elsewhen(CntrlDecMod.io.nextPCsel === "b11".U) {
-      PCMod.io.input := (jalrCompMod.io.out).asUInt
-      ifid.io.pc := 0.U
-      ifid.io.pc4 := 0.U
-      ifid.io.ins := 0.U
-    }
-      .otherwise {
-      PCMod.io.input := PCMod.io.pc4
-    }
-
-}
 
 jalrCompMod.io.rs1 := regfileMod.io.rdata1
 jalrCompMod.io.imm := ImmgenMod.io.i_imm
@@ -266,6 +238,54 @@ HD.io.ID_EX_REGRD := idex.io.rd_out
 HD.io.pc_in := ifid.io.pc4_out
 HD.io.current_pc := ifid.io.pc_out
 
+when(HD.io.inst_forward === "b1".U) {
+    ifid.io.ins := HD.io.inst_out.asUInt
+    ifid.io.pc := HD.io.current_pc_out.asUInt}
+    // .elsewhen(CntrlDecMod.io.nextPCsel  === "b10".U) {
+      
+
+    //   PCMod.io.input := ImmgenMod.io.uj_imm.asUInt
+    //   ifid.io.pc := 0.U
+    //   ifid.io.pc4 := 0.U
+    //   ifid.io.ins := 0.U}
+     .otherwise {
+        ifid.io.ins := instmemMod.io.inst
+    }
+
+    when(HD.io.pc_forward === "b1".U) {
+  PCMod.io.input := HD.io.pc_out
+} .otherwise {
+    when(CntrlDecMod.io.nextPCsel === "b01".U) {
+      when(BLU.io.output === 1.U && CntrlDecMod.io.Branch === 1.B) {
+        PCMod.io.input := ImmgenMod.io.sb_imm.asUInt
+        ifid.io.pc := 0.U
+        ifid.io.pc4 := 0.U
+        ifid.io.ins := 0.U
+      } .otherwise {
+        PCMod.io.input := PCMod.io.pc4
+      }
+}.elsewhen(CntrlDecMod.io.nextPCsel === "b10".U) {
+      PCMod.io.input := ImmgenMod.io.uj_imm.asUInt
+      ifid.io.pc := 0.U
+      ifid.io.pc4 := 0.U
+      ifid.io.ins := 0.U
+    }.elsewhen(CntrlDecMod.io.nextPCsel === "b11".U) {
+      PCMod.io.input := (jalrCompMod.io.out).asUInt
+      ifid.io.pc := 0.U
+      ifid.io.pc4 := 0.U
+      ifid.io.ins := 0.U
+    }
+      .otherwise {
+      PCMod.io.input := PCMod.io.pc4
+    }
+
+}
+
+exemem.io.RegWrite := idex.io.RegWrite_out
+exemem.io.MemtoReg := idex.io.MemtoReg_out
+exemem.io.rs2 := idex.io.rs2_out
+exemem.io.alu := ALUMod.io.output
+exemem.io.rd := idex.io.rd_out
 when (idex.io.OpA_s_out === "b10".U) {
     ALUMod.io.in_A := idex.io.pc4_out.asSInt
   } .otherwise{
@@ -307,7 +327,7 @@ when(idex.io.OpB_s_out === 1.B){
     ALUMod.io.in_B := exemem.io.alu_out
     exemem.io.rs2 := exemem.io.alu_out
   } .elsewhen(FU.io.forward_b === "b10".U) {
-    ALUMod.io.in_B := regfileMod.io.WriteData
+    ALUMod.io.in_B := regfileMod.io.WriteData 
     exemem.io.rs2 := regfileMod.io.WriteData
   } .otherwise {
     ALUMod.io.in_B:= idex.io.rs2_out
@@ -335,15 +355,11 @@ ALUMod.io.aluc := ALUcMod.io.aluc
 exemem.io.MemWrite := idex.io.MemWrite_out
 exemem.io.MemRead := idex.io.MemRead_out
 
-exemem.io.RegWrite := idex.io.RegWrite_out
-exemem.io.MemtoReg := idex.io.MemtoReg_out
-exemem.io.rs2 := idex.io.rs2_out
-exemem.io.alu := ALUMod.io.output
-exemem.io.rd := idex.io.rd_out
+
 
 
 //datamemory
-datamemMod.io.Addr := (exemem.io.alu_out(11,2)).asUInt
+datamemMod.io.Addr := (exemem.io.alu_out).asUInt
 datamemMod.io.Data := exemem.io.rs2_out
 datamemMod.io.MemWrite := exemem.io.MemWrite_out
 datamemMod.io.MemRead := exemem.io.MemRead_out
@@ -357,6 +373,7 @@ memwb.io.alu := exemem.io.alu_out
 memwb.io.rd := exemem.io.rd_out
 
 
+    
 
 
 regfileMod.io.WriteData := MuxCase ( 0.S , Array (
