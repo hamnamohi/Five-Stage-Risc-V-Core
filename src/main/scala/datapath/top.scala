@@ -302,23 +302,23 @@ when(FU.io.forward_a === "b00".U) {
 //InB
 when (CntrlDecMod.io.Ex_sel === "b00".U){
 		idex.io.imm :=ImmgenMod.io.i_imm}
-	.elsewhen (CntrlDecMod.io.Ex_sel === "b10".U){
-		idex.io.imm :=ImmgenMod.io.u_imm}
 	.elsewhen (CntrlDecMod.io.Ex_sel === "b01".U){
 		idex.io.imm :=ImmgenMod.io.s_imm}
+	.elsewhen (CntrlDecMod.io.Ex_sel === "b10".U){
+		idex.io.imm := ImmgenMod.io.u_imm}
 	.otherwise {idex.io.imm := 0.S}
 	
 ALUMod.io.in_B := 0.S
 when(idex.io.OpB_s_out === 1.B){
 		ALUMod.io.in_B := idex.io.imm_out
 	
-	when (FU.io.forward_b === "b01".U){exemem.io.rs2 := exemem.io.alu_out}
-		.elsewhen (FU.io.forward_b === "b10".U ){exemem.io.rs2 := regfileMod.io.WriteData}
-		.elsewhen (FU.io.forward_b === "b00".U ){exemem.io.rs2 := idex.io.rs2_out}
+	when (FU.io.forward_b === "b00".U){exemem.io.rs2 := idex.io.rs2_out}
+		.elsewhen ( FU.io.forward_b === "b01".U  ){exemem.io.rs2 := exemem.io.alu_out}
+		.elsewhen (FU.io.forward_b === "b10".U){exemem.io.rs2 := regfileMod.io.WriteData}
     .otherwise {
 		exemem.io.rs2 := idex.io.rs2_out
 		}
-	} 
+	}                      
 	.otherwise{
 		when(FU.io.forward_b === "b00".U) {
     ALUMod.io.in_B := idex.io.rs2_out
